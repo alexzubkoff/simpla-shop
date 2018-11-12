@@ -1,0 +1,6 @@
+# Git ignore folders and files
+config.php
+.idea/*
+
+
+
