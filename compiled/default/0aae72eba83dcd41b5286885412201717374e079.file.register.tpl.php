@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.18, created on 2018-11-12 13:40:17
+<?php /* Smarty version Smarty-3.1.18, created on 2018-11-12 16:40:41
          compiled from "C:\OSPanel\domains\localhost\okay-cms\design\default\html\register.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:285725be958914961b4-02279580%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '0aae72eba83dcd41b5286885412201717374e079' => 
     array (
       0 => 'C:\\OSPanel\\domains\\localhost\\okay-cms\\design\\default\\html\\register.tpl',
-      1 => 1492708202,
+      1 => 1542030031,
       2 => 'file',
     ),
   ),
@@ -15,6 +15,8 @@ $_valid = $_smarty_tpl->decodeProperties(array (
   'function' => 
   array (
   ),
+  'version' => 'Smarty-3.1.18',
+  'unifunc' => 'content_5be958914ff7c0_06471565',
   'variables' => 
   array (
     'error' => 0,
@@ -22,8 +24,6 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'email' => 0,
   ),
   'has_nocache_code' => false,
-  'version' => 'Smarty-3.1.18',
-  'unifunc' => 'content_5be958914ff7c0_06471565',
 ),false); /*/%%SmartyHeaderCode%%*/?>
 <?php if ($_valid && !is_callable('content_5be958914ff7c0_06471565')) {function content_5be958914ff7c0_06471565($_smarty_tpl) {?><?php if (!is_callable('smarty_function_math')) include 'C:\\OSPanel\\domains\\localhost\\okay-cms\\Smarty\\libs\\plugins\\function.math.php';
 ?>

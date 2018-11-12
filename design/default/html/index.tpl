@@ -28,6 +28,7 @@
 	<!--подкючаем fancybox-->
 	<link rel="stylesheet" type="text/css" media="all" href="js/fancybox/jquery.fancybox.css">
 	<script type="text/javascript" src="js/fancybox/jquery.fancybox.js"></script>
+	<script src="../../../js/auth.js" type="text/javascript"></script>
 	
 	{* Всплывающие подсказки для администратора *}
 	{if $smarty.session.admin == 'admin'}
@@ -60,7 +61,6 @@
 		.autocomplete-suggestions .selected { background:#F0F0F0; }
 		.autocomplete-suggestions div { padding:2px 5px; white-space:nowrap; }
 		.autocomplete-suggestions strong { font-weight:normal; color:#3399FF; }
-		#feedback {display:none;}
 	</style>	
 	<script>
 	$(function() {
@@ -121,97 +121,20 @@
 				</span>
 				<a id="logout" href="user/logout">выйти</a>
 			{else}
-				<a href="#feedback" rel="nofollow" class="modalbox">Авторизация</a>
-				<a id="register" href="user/register">Регистрация</a>
-				<a id="login" href="user/login">Вход</a>
+				<a href="#auth" rel="nofollow" class="modalbox">Авторизация</a>
+				{*<a  href="user/register">Регистрация</a>
+				<a  href="user/login">Вход</a>*}
 			{/if}
 		</div>
-		<!-- Вход пользователя (The End)-->
-		{*<style type="text/css">
-			#feedback {display:none;}
-		</style>*}
 
-		<div id="feedback" class="popup-auth">
+		<div  class="popup-auth">
 			<!-- Login -->
-			<div class="popup-tab" data-tab="login">
-				<p class="popup-title">Вход в личный кабинет</p>
-				<form action="user/login" method="post" id="auth-login" class="js-auth-form">
-					<input type="hidden" name="action" value="login">
-					<div class="form-row">
-						<label class="form-label">Email</label>
-						<input class="form-input" type="email" name="email" required="">
-					</div>
-					<div class="form-row">
-						<label class="form-label">Пароль</label>
-						<input class="form-input" type="password" name="password" required="">
-						<small class="long-link">
-							<span class="js-tab-toggle" data-target="password_remind">Забыли пароль?</span>
-						</small>
-					</div>
-					<p class="alert alert-error hidden js-result"></p>
-					<div class="row text-center">
-						<div class="col-xs-6 col-xs-push-6 form-row text-right-xs">
-							<input type="submit" class="btn" value="Авторизироваться">
-						</div>
-						<div class="col-xs-6 col-xs-pull-6 form-row text-left-xs">
-							<span class="btn btn-light js-tab-toggle" data-target="register">Зарегистрироваться</span>
-						</div>
-					</div>
-					<div class="success"></div>
-				</form>
-			</div>
+			{include file='auth_popup.tpl'}
 			<!-- Register -->
-			<div class="popup-tab hidden" data-tab="register">
-				<p class="popup-title">Регистрация</p>
-				<form action="user/register" method="post" id="auth-register" class="js-auth-form">
-					<input type="hidden" name="action" value="register">
-					<div class="form-row">
-						<label class="form-label">Имя</label>
-						<input class="form-input" type="text" name="name" required="">
-					</div>
-					<div class="form-row">
-						<label class="form-label">Email</label>
-						<input class="form-input" type="email" name="email" required="">
-					</div>
-					<div class="form-row">
-						<label class="form-label">Пароль</label>
-						<input class="form-input" type="password" name="password" required="">
-					</div>
-					<p class="alert alert-error hidden js-result"></p>
-					<div class="row text-center">
-						<div class="col-xs-6 col-xs-push-6 form-row text-right-xs">
-							<input type="submit" class="btn" value="Зарегистрироваться">
-						</div>
-						<div class="col-xs-6 col-xs-pull-6 form-row text-left-xs">
-							<span class="btn btn-light js-tab-toggle" data-target="login">Уже зарегистрированы?</span>
-						</div>
-					</div>
-					<div class="success"></div>
-				</form>
-			</div>
+            {include file='register-popup.tpl'}
 			<!-- Register -->
-			<div class="popup-tab hidden" data-tab="password_remind">
-				<p class="popup-title">Напомнить пароль</p>
-				<form action="user/password_remind" method="post" id="auth-password-remind" class="js-auth-form">
-					<input type="hidden" name="action" value="password_remind">
-					<div class="form-row">
-						<label class="form-label">Email</label>
-						<input class="form-input" type="email" name="email" required="">
-					</div>
-					<p class="alert alert-error hidden js-result"></p>
-					<div class="row text-center">
-						<div class="col-xs-6 col-xs-push-6 form-row text-right-xs">
-							<input type="submit" class="btn" value="Напомнить">
-						</div>
-						<div class="col-xs-6 col-xs-pull-6 form-row text-left-xs hidden">
-							<span class="btn btn-light js-tab-toggle" data-target="login">Войти</span>
-						</div>
-					</div>
-					<div class="success success-remind-pass"><span></span></div>
-				</form>
-			</div>
-			<button title="Close (Esc)" type="button" class="mfp-close">×</button></div>
-
+            {include file='pass-remind.tpl'}
+		</div>
 
 	</div>
 	</div>
@@ -352,21 +275,5 @@
 		<a href="http://simplacms.ru">Скрипт интернет-магазина Simpla</a>
 	</div>
 	<!-- Футер (The End)-->
-
-	<script type="text/javascript">
-        $(document).ready(function(){
-            $(".modalbox").fancybox();
-            $("#f_contact").submit(function(){ return false; });
-            $("#f_send").on("click", function(){
-
-                // тут дальнейшие действия по обработке формы
-                // закрываем окно, как правило делать это нужно после обработки данных
-                $("#f_contact").fadeOut("fast", function(){
-                    $(this).before("<p><strong>Ваше сообщение отправлено!</strong></p>");
-                    setTimeout("$.fancybox.close()", 1000);
-                });
-            });
-        });
-	</script>
 </body>
 </html>

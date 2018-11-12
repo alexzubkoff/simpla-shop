@@ -929,6 +929,8 @@ table.order_info td
 	border: 1px dotted #ff4545;
 }
 
+#auth,#register,#password_remind {display:none;}
+
 /* @end */
 
 
