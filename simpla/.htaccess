@@ -1,0 +1,5 @@
+AddType application/octet-stream csv
+AuthName "Simpla CMS"
+AuthType Basic
+AuthUserFile C:\OSPanel\domains\localhost\okay-cms/simpla/.passwd
+require valid-user
