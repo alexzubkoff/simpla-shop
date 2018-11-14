@@ -1,12 +1,5 @@
 <div id="auth" class="popup-tab" data-tab="login">
     <p class="popup-title">Вход в личный кабинет</p>
-    {if $error}
-        <div class="message_error">
-            {if $error == 'login_incorrect'}Неверный логин или пароль
-            {elseif $error == 'user_disabled'}Ваш аккаунт еще не активирован.
-            {else}{$error}{/if}
-        </div>
-    {/if}
     <form action="user/login" method="post" id="auth-login" class="js-auth-form">
         <input type="hidden" name="action" value="login">
         <div class="form-row">
@@ -30,5 +23,12 @@
             </div>
         </div>
         <div class="success"></div>
+        {if $error}
+            <div class="message_error">
+                {if $error == 'login_incorrect'}Неверный логин или пароль
+                {elseif $error == 'user_disabled'}Ваш аккаунт еще не активирован.
+                {else}{$error}{/if}
+            </div>
+        {/if}
     </form>
 </div>
