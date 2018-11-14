@@ -6,7 +6,7 @@
             <label class="form-label">Email</label>
             <input class="form-input" type="email" name="email" required="">
         </div>
-        <p id = "send-mail-message" class="alert alert-error hidden js-result"></p>
+        <p id="send-mail-message" class="alert alert-error hidden js-result"></p>
         <div class="row text-center">
             <div class="col-xs-6 col-xs-push-6 form-row text-right-xs">
                 <input type="submit" class="btn" value="Напомнить">

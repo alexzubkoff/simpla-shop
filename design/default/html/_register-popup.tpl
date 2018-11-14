@@ -1,6 +1,6 @@
 <div id="register" class="popup-tab hidden" data-tab="register">
     <p class="popup-title">Регистрация</p>
-    <form action="user/register" method="post" id="auth-register" class="js-auth-form">
+    <form action="user/register" method="post" id="auth-register" class="js-auth-form2">
         <input type="hidden" name="action" value="register">
         <div class="form-row">
             <label class="form-label">Имя</label>
@@ -15,7 +15,8 @@
             <input class="form-input" type="password" name="password" required="">
         </div>
         <div class="captcha"><img src="captcha/image.php?{math equation='rand(10,10000)'}"/></div>
-        <input class="input_captcha" id="comment_captcha" type="text" name="captcha_code" value="" data-format="\d\d\d\d" data-notice="Введите капчу"/>
+        <input class="input_captcha" id="comment_captcha" type="text" name="captcha_code" value=""
+               data-format="\d\d\d\d" data-notice="Введите капчу"/>
 
         <p class="alert alert-error hidden js-result"></p>
         <div class="row text-center">
