@@ -1,0 +1,5 @@
+AddType application/octet-stream csv
+AuthName "Simpla CMS"
+AuthType Basic
+AuthUserFile E:\OpenServer\domains\junsimpla.loc/simpla/.passwd
+require valid-user

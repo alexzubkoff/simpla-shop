@@ -1,0 +1,15 @@
+/.idea
+node_modules/
+
+/files/**/*.jpg
+/files/**/*.jpeg
+/files/**/*.gif
+/files/**/*.png
+
+compiled/*
+!compiled/.htaccess
+
+simpla/design/compiled/*
+!simpla/design/compiled/.htaccess
+
+robots.txt
