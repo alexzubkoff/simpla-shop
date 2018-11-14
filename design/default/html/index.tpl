@@ -127,13 +127,13 @@
 			{/if}
 		</div>
 
-		<div  class="popup-auth">
+		<div id="popup-auth" class="popup-auth">
 			<!-- Login -->
-			{include file='auth_popup.tpl'}
+			{include file='_auth-popup.tpl'}
 			<!-- Register -->
-            {include file='register-popup.tpl'}
+            {include file='_register-popup.tpl'}
 			<!-- Register -->
-            {include file='pass-remind.tpl'}
+            {include file='_pass-remind.tpl'}
 		</div>
 
 	</div>

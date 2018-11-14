@@ -4,9 +4,11 @@
 	$limit = 100;
 	
 	$keyword = $simpla->request->get('query', 'string');
-	
+
+
 	$simpla->db->query('SELECT u.id, u.name, u.email FROM __users u WHERE u.name LIKE "%'.$simpla->db->escape($keyword).'%" OR u.email LIKE "%'.$simpla->db->escape($keyword).'%"ORDER BY u.name LIMIT ?', $limit);
 	$users = $simpla->db->results();
+
 	
 	$suggestions = array();
 	foreach($users as $user)

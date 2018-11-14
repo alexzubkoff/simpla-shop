@@ -14,4 +14,53 @@ $(document).ready(function(){
             setTimeout("$.fancybox.close()", 1000);
         });
     });
+
+    $('body').on('submit','.js-auth-form',function (e) {
+        e.preventDefault();
+        var data = $(this).serialize();
+        $.ajax({
+            type: 'POST',
+            url: 'ajax/user_login.php',
+            data: data,
+            dataType: 'json',
+            success: function(response) {
+                console.log(response.action);
+                if(response.url){
+                    window.location.href = response.url;
+                }else{
+                   $('#err-msg').text('Неверный логин или пароль').css({'color':'#de5959','background-color':'#ffe9e9'});
+                }
+            },
+            error: function( request, status, err ) {
+                console.log( 'something went wrong', status, err );
+            }
+            });
+
+    });
+
+
+    $('body').on('submit','#auth-password-remind',function (e) {
+        e.preventDefault();
+        var data = $(this).serialize();
+        $.ajax({
+            type: 'POST',
+            url: 'ajax/user_login.php',
+            data: data,
+            dataType: 'json',
+            success: function(response) {
+                console.log(response.action);
+                if(response.action){
+                    $('#send-mail-message').text(' Ссылка для восстановления пароля была отправлена вам на почту').css({'color':'#011dff','background-color':'#ffe9e9'});
+                    setTimeout(function() { window.location.href = response.url; }, 1000);
+                }else{
+                    $('#send-mail-message').text('Неверный адрес почты').css({'color':'#de5959','background-color':'#ffe9e9'});
+                }
+            },
+            error: function( request, status, err ) {
+                console.log( 'something went wrong', status, err );
+            }
+        });
+
+    });
+
 });

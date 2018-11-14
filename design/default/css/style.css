@@ -929,7 +929,65 @@ table.order_info td
 	border: 1px dotted #ff4545;
 }
 
-#auth,#register,#password_remind {display:none;}
+#auth,#register,#password_remind {
+	display:none;
+	background: #fafafa;
+	max-width: 490px;
+	margin: 0 auto;
+	position: relative;
+	padding: 0 15px;
+	box-shadow: 0 2px 5px -2px #000;
+}
+
+/* Popup auth */
+.popup-auth{
+	background: #fafafa;
+	max-width: 490px;
+	margin: 0 auto;
+	position: relative;
+	padding: 0 15px;
+	box-shadow: 0 2px 5px -2px #000;
+}
+.popup-auth .popup-title{
+	padding: 10px 15px;
+	background: #fafafa;
+	border-bottom: 1px solid #ddd;
+	margin: 0 -15px 20px;
+}
+.popup-auth.opened .popup-tab{
+	-webkit-animation: cd-fade-in 0.5s;
+	-moz-animation: cd-fade-in 0.5s;
+	animation: cd-fade-in 0.5s;
+}
+.popup-auth .success{
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 9;
+	background: #fff url(../images/loader.gif) no-repeat center;
+	opacity: 0;
+	visibility: hidden;
+	transition: all .3s ease;
+}
+.popup-auth .success.success-remind-pass{
+	background: #fff;
+}
+.popup-auth .success.success-remind-pass span{
+	position: absolute;
+	top: 50%;
+	left: 15px;
+	right: 15px;
+	text-align: center;
+	color: #278d31;
+	transform: translateY(-50%);
+}
+.popup-auth.successed .success{
+	opacity: .9;
+	visibility: visible;
+}
+
 
 /* @end */
 
