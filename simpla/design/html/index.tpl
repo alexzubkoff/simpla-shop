@@ -91,6 +91,10 @@
 		<li><a href="index.php?module=PaymentMethodsAdmin"><img src="design/images/menu/settings.png"><b>Настройки</b></a></li>
 	{elseif in_array('managers', $manager->permissions)}
 		<li><a href="index.php?module=ManagersAdmin"><img src="design/images/menu/settings.png"><b>Настройки</b></a></li>
+		{* redirects *}
+    {elseif in_array('redirects', $manager->permissions)}
+		<li><a href="index.php?module=RedirectsAdmin"><img src="design/images/menu/settings.png"><b>Настройки</b></a></li>
+	{* redirects /*}
 	{/if}
 		
 	</ul>

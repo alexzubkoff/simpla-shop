@@ -67,6 +67,12 @@ switch ($object)
     	if($simpla->managers->access('labels'))
         $result = $simpla->orders->update_label($id, $values);
         break;
+         /* redirects */
+    case 'redirect':
+    	if($simpla->managers->access('redirects'))
+        $result = $simpla->redirects->update_redirect($id, $values);
+        break;
+    /* redirects /*/
 }
 
 header("Content-type: application/json; charset=UTF-8");

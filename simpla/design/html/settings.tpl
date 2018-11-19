@@ -4,6 +4,9 @@
 	{if in_array('delivery', $manager->permissions)}<li><a href="index.php?module=DeliveriesAdmin">Доставка</a></li>{/if}
 	{if in_array('payment', $manager->permissions)}<li><a href="index.php?module=PaymentMethodsAdmin">Оплата</a></li>{/if}
 	{if in_array('managers', $manager->permissions)}<li><a href="index.php?module=ManagersAdmin">Менеджеры</a></li>{/if}
+	{* redirects *}
+    {if in_array('redirects', $manager->permissions)}<li><a href="index.php?module=RedirectsAdmin">Короткие ссылки</a></li>{/if}
+    {* redirects /*}
 {/capture}
  
 {$meta_title = "Настройки" scope=parent}
@@ -127,3 +130,14 @@
 	
 </form>
 <!-- Основная форма (The End) -->
+
+{literal}
+<script>
+$(function() {
+	$('#change_password_form').hide();
+	$('#change_password').click(function() {
+		$('#change_password_form').show();
+	});
+});
+</script>
+{/literal}

@@ -37,6 +37,9 @@ class Simpla
 		'feedbacks'  => 'Feedbacks',
 		'notify'     => 'Notify',
 		'managers'   => 'Managers'
+		/* redirects */
+        , 'redirects'  => 'Redirects'
+        /* redirects /*/
 	);
 	
 	// Созданные объекты

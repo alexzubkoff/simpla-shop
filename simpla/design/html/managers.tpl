@@ -5,6 +5,9 @@
 	{if in_array('delivery', $manager->permissions)}<li><a href="index.php?module=DeliveriesAdmin">Доставка</a></li>{/if}
 	{if in_array('payment', $manager->permissions)}<li><a href="index.php?module=PaymentMethodsAdmin">Оплата</a></li>{/if}
 	<li class="active"><a href="index.php?module=ManagersAdmin">Менеджеры</a></li>
+	{* redirects *}
+    {if in_array('redirects', $manager->permissions)}<li><a href="index.php?module=RedirectsAdmin">Короткие ссылки</a></li>{/if}
+    {* redirects /*}
 {/capture}
 
 {* Title *}

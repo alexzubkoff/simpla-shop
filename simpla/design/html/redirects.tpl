@@ -3,40 +3,45 @@
 	{if in_array('settings', $manager->permissions)}<li><a href="index.php?module=SettingsAdmin">Настройки</a></li>{/if}
 	{if in_array('currency', $manager->permissions)}<li><a href="index.php?module=CurrencyAdmin">Валюты</a></li>{/if}
 	{if in_array('delivery', $manager->permissions)}<li><a href="index.php?module=DeliveriesAdmin">Доставка</a></li>{/if}
-	<li class="active"><a href="index.php?module=PaymentMethodsAdmin">Оплата</a></li>
+	{if in_array('payment', $manager->permissions)}<li><a href="index.php?module=PaymentMethodsAdmin">Оплата</a></li>{/if}
 	{if in_array('managers', $manager->permissions)}<li><a href="index.php?module=ManagersAdmin">Менеджеры</a></li>{/if}
-	{* redirects *}
-    {if in_array('redirects', $manager->permissions)}<li><a href="index.php?module=RedirectsAdmin">Короткие ссылки</a></li>{/if}
-    {* redirects /*}
+    <li class="active"><a href="index.php?module=RedirectsAdmin">Короткие ссылки</a></li>
 {/capture}
 
 {* Title *}
-{$meta_title='Способы оплаты' scope=parent}
+{$meta_title ="Короткие ссылки" scope=parent}
 
 {* Заголовок *}
 <div id="header">
-	<h1>Способы оплаты</h1>
-	<a class="add" href="{url module=PaymentMethodAdmin}">Добавить способ оплаты</a>
-</div>	
+	<h1>Короткие ссылки</h1>
+	<a class="add" href="{url module=RedirectAdmin}">Добавить короткую ссылку</a>
+</div>
 
+<div class="message message_success">
+	<span class="text">! ВНИМАНИЕ ! Все короткие ссылки переходят на целевую страницу с помощью 301 редиректа</span>
+</div>
+
+{if $redirects}
 <div id="main_list">
-
+    <!-- Листалка страниц -->
+	{include file='pagination.tpl'}	
+	<!-- Листалка страниц (The End) -->
 	<form id="list_form" method="post">
-	<input type="hidden" name="session_id" value="{$smarty.session.id}">
-	
-		<div id="list">			
-			{foreach $payment_methods as $payment_method}
-			<div class="{if !$payment_method->enabled}invisible{/if} row">
-				<input type="hidden" name="positions[{$payment_method->id}]" value="{$payment_method->position}">
+		<input type="hidden" name="session_id" value="{$smarty.session.id}">
+		<div id="list">		
+			{foreach $redirects as $redirect}
+			<div class="{if !$redirect->visible}invisible{/if} row">
+				<input type="hidden" name="positions[{$redirect->id}]" value="{$redirect->position}">
 				<div class="move cell"><div class="move_zone"></div></div>
 		 		<div class="checkbox cell">
-					<input type="checkbox" name="check[]" value="{$payment_method->id}" />				
+					<input type="checkbox" name="check[]" value="{$redirect->id}" />				
 				</div>
 				<div class="name cell">
-					<a href="{url module=PaymentMethodAdmin id=$payment_method->id return=$smarty.server.REQUEST_URI}">{$payment_method->name}</a>
+					<a href="{url module=RedirectAdmin id=$redirect->id return=$smarty.server.REQUEST_URI}">{$redirect->name|escape}</a>(Переходов: {$redirect->count})<br />
+                    {$config->root_url}/{$redirect->from_url|escape} =&gt; {$config->root_url}/{$redirect->to_url|escape}
 				</div>
 				<div class="icons cell">
-					<a class="enable" title="Активен" href="#"></a>
+					<a class="enable" title="Активна" href="#"></a>
 					<a class="delete" title="Удалить" href="#"></a>
 				</div>
 				<div class="clear"></div>
@@ -49,8 +54,8 @@
 	
 		<span id="select">
 		<select name="action">
-			<option value="enable">Включить</option>
-			<option value="disable">Выключить</option>
+			<option value="enable">Сделать видимыми</option>
+			<option value="disable">Сделать невидимыми</option>
 			<option value="delete">Удалить</option>
 		</select>
 		</span>
@@ -58,10 +63,16 @@
 		<input id="apply_action" class="button_green" type="submit" value="Применить">
 	
 		</div>
-	</form>
+	</form>	
+    <!-- Листалка страниц -->
+	{include file='pagination.tpl'}	
+	<!-- Листалка страниц (The End) -->
 </div>
+{else}
+	Нет ссылок
+{/if}
 
-
+{* On document load *}
 {literal}
 <script>
 $(function() {
@@ -112,17 +123,18 @@ $(function() {
 				colorize();
 			});
 		}
-	}); 
+	});
 
+ 
 	// Раскраска строк
 	function colorize()
 	{
-		$("#list div.row:even").addClass('even');
-		$("#list div.row:odd").removeClass('even');
+		$(".row:even").addClass('even');
+		$(".row:odd").removeClass('even');
 	}
 	// Раскрасить строки сразу
 	colorize();
-
+ 
 
 	// Выделить все
 	$("#check_all").click(function() {
@@ -131,13 +143,14 @@ $(function() {
 
 	// Удалить 
 	$("a.delete").click(function() {
-		$('#list input[type="checkbox"][name*="check"]').attr('checked', false);
+		$('#list_form input[type="checkbox"][name*="check"]').attr('checked', false);
 		$(this).closest(".row").find('input[type="checkbox"][name*="check"]').attr('checked', true);
 		$(this).closest("form").find('select[name="action"] option[value=delete]').attr('selected', true);
 		$(this).closest("form").submit();
 	});
+	
 
-	// Показать товар
+	// Показать
 	$("a.enable").click(function() {
 		var icon        = $(this);
 		var line        = icon.closest(".row");
@@ -147,7 +160,7 @@ $(function() {
 		$.ajax({
 			type: 'POST',
 			url: 'ajax/update_object.php',
-			data: {'object': 'payment', 'id': id, 'values': {'enabled': state}, 'session_id': '{/literal}{$smarty.session.id}{literal}'},
+			data: {'object': 'redirect', 'id': id, 'values': {'visible': state}, 'session_id': '{/literal}{$smarty.session.id}{literal}'},
 			success: function(data){
 				icon.removeClass('loading_icon');
 				if(state)
@@ -160,7 +173,7 @@ $(function() {
 		return false;	
 	});
 
-	
+
 	$("form").submit(function() {
 		if($('select[name="action"]').val()=='delete' && !confirm('Подтвердите удаление'))
 			return false;	
