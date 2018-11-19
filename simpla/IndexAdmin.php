@@ -49,6 +49,10 @@ class IndexAdmin extends Simpla
 		'PaymentMethodsAdmin' => 'payment',
 		'ManagersAdmin'       => 'managers',
 		'ManagerAdmin'        => 'managers'
+		/* features_groups */
+        ,'FeaturesGroupsAdmin'=> 'features'
+        ,'FeaturesGroupAdmin' => 'features'
+        /* features_groups /*/
 	);
 
 	// Конструктор

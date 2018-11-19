@@ -27,7 +27,11 @@ class Features extends Simpla
 		$id_filter = '';	
 		if(!empty($filter['id']))
 			$id_filter = $this->db->placehold('AND f.id in(?@)', (array)$filter['id']);
-		
+		 /* features_groups */
+        $group_id_filter = '';
+		if(!empty($filter['group_id']))
+            $group_id_filter = $this->db->placehold(' AND f.group_id=? ', intval($filter['group_id']));
+        /* features_groups /*/
 		// Выбираем свойства
 		$query = $this->db->placehold("SELECT id, name, position, in_filter FROM __features AS f
 									WHERE 1
@@ -189,8 +193,101 @@ class Features extends Simpla
 	{
 		$query = $this->db->placehold("SELECT f.id as feature_id, f.name, po.value, po.product_id FROM __options po LEFT JOIN __features f ON f.id=po.feature_id
 										WHERE po.product_id in(?@) ORDER BY f.position", (array)$product_id);
+$this->db->query($query);
+		$res = $this->db->results();
 
+		return $res;
+	}
+
+    /* features_groups */
+    public function get_grouped_products_options($product_id){
+        $options = $groups = $res = array();
+        $query = $this->db->placehold("SELECT f.id as feature_id, f.name, f.group_id, po.value, po.product_id FROM __options po 
+                                        LEFT JOIN __features f ON f.id=po.feature_id
+                                        LEFT JOIN __features_groups fg ON f.group_id=fg.id
+										WHERE po.product_id = ? ORDER BY fg.position, f.position", $product_id);
+
+		$this->db->query($query);
+
+        //print_r($this->db->results());
+        //return;
+
+        foreach($this->db->results() as $o){
+            $res[$o->group_id]->features[] = $o;
+        }
+        if(!empty($res)){
+            foreach($this->get_features_groups(array_keys($res)) as $r)
+                $res[$r->id]->group = $r;
+        }
+
+        return $res;
+    }
+
+    public function get_features_groups($filter = array()){
+		$id_filter = '';
+		if(!empty($filter['id']))
+			$id_filter = $this->db->placehold('AND id in(?@)', (array)$filter['id']);
+
+		// Выбираем группы свойств
+		$query = $this->db->placehold("SELECT id, name, image, position FROM __features_groups
+									WHERE 1
+									$id_filter ORDER BY position");
 		$this->db->query($query);
 		return $this->db->results();
 	}
+		public function get_features_group($id){
+		// Выбираем группу свойств
+		$query = $this->db->placehold("SELECT id, name, image, position FROM __features_groups WHERE id=? LIMIT 1", $id);
+		$this->db->query($query);
+
+		return $this->db->result();
+	}
+
+    public function add_features_group($features_group){
+		$query = $this->db->placehold("INSERT INTO __features_groups SET ?%", $features_group);
+		$this->db->query($query);
+		$id = $this->db->insert_id();
+
+		$query = $this->db->placehold("UPDATE __features_groups SET position=id WHERE id=? LIMIT 1", $id);
+		$this->db->query($query);
+		return $id;
+	}
+
+	public function update_features_group($id, $features_group){
+		$query = $this->db->placehold("UPDATE __features_groups SET ?% WHERE id in(?@) LIMIT ?", (array)$features_group, (array)$id, count((array)$id));
+		$this->db->query($query);
+		return $id;
+	}
+
+    public function delete_features_group($id = array()){
+		if(!empty($id) && intval($id) != 1){
+			$query = $this->db->placehold("DELETE FROM __features_groups WHERE id=? LIMIT 1", intval($id));
+			$this->db->query($query);
+
+			$query = $this->db->placehold("UPDATE __features SET group_id=1 WHERE group_id=?", intval($id));
+			$this->db->query($query);
+		}
+	}
+
+    public function delete_image($features_groups_ids){
+		$features_groups_ids = (array) $features_groups_ids;
+		$query = $this->db->placehold("SELECT image FROM __features_groups WHERE id in(?@)", $features_groups_ids);
+		$this->db->query($query);
+		$filenames = $this->db->results('image');
+		if(!empty($filenames)){
+			$query = $this->db->placehold("UPDATE __features_groups SET image=NULL WHERE id in(?@)", $features_groups_ids);
+			$this->db->query($query);
+			foreach($filenames as $filename){
+				$query = $this->db->placehold("SELECT count(*) as count FROM __features_groups WHERE image=?", $filename);
+				$this->db->query($query);
+				$count = $this->db->result('count');
+				if($count == 0){
+					@unlink($this->config->root_dir.$this->config->features_images_dir.$filename);
+				}
+			}
+		}
+	}
+    /* features_groups /*/
+
+
 }

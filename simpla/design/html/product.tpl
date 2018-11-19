@@ -2,7 +2,12 @@
 	<li class="active"><a href="{url module=ProductsAdmin category_id=$product->category_id return=null brand_id=null id=null}">Товары</a></li>
 	{if in_array('categories', $manager->permissions)}<li><a href="index.php?module=CategoriesAdmin">Категории</a></li>{/if}
 	{if in_array('brands', $manager->permissions)}<li><a href="index.php?module=BrandsAdmin">Бренды</a></li>{/if}
-	{if in_array('features', $manager->permissions)}<li><a href="index.php?module=FeaturesAdmin">Свойства</a></li>{/if}
+{if in_array('features', $manager->permissions)}
+        <li><a href="index.php?module=FeaturesAdmin">Свойства</a></li>
+        {* features_groups *}
+        <li><a href="index.php?module=FeaturesGroupsAdmin">Группы свойств</a></li>
+        {* features_groups /*}
+    {/if}
 {/capture}
 
 {if $product->id}

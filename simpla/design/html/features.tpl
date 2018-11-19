@@ -4,6 +4,9 @@
 	{if in_array('categories', $manager->permissions)}<li><a href="index.php?module=CategoriesAdmin">Категории</a></li>{/if}
 	{if in_array('brands', $manager->permissions)}<li><a href="index.php?module=BrandsAdmin">Бренды</a></li>{/if}
 	<li class="active"><a href="index.php?module=FeaturesAdmin">Свойства</a></li>
+	 {* features_groups *}
+    <li><a href="index.php?module=FeaturesGroupsAdmin">Группы свойств</a></li>
+    {* features_groups /*}
 {/capture}
 
 {* Title *}
@@ -48,9 +51,23 @@
 		<select name="action">
 			<option value="set_in_filter">Использовать в фильтре</option>
 			<option value="unset_in_filter">Не использовать в фильтре</option>
+			 {* features_groups *}
+            {if $features_groups|count>0}
+                <option value="move_to_group">Прикрепить к группе</option>
+			{/if}
+            {* features_groups /*}
 			<option value="delete">Удалить</option>
 		</select>
 		</span>
+		 {* features_groups *}
+        <span id="move_to_group" style="display:none;">
+		<select name="target_group">
+			{foreach $features_groups as $target_group}
+                <option value="{$target_group->id}">{$target_group->name}</option>
+			{/foreach}
+		</select>
+		</span>
+        {* features_groups /*}
 	
 		<input id="apply_action" class="button_green" type="submit" value="Применить">
 		</div>
@@ -81,6 +98,14 @@
 	{/function}
 	{categories_tree categories=$categories}
 	<!-- Категории товаров (The End)-->
+	{* features_groups *}
+    <ul>
+        <li {if !$features_group->id}class="selected"{/if}><a href="{url group_id=null}">Все группы</a></li>
+        {foreach $features_groups as $group}
+            <li {if $features_group->id == $group->id}class="selected"{else}class="droppable features_group"{/if} data-group_id="{$group->id}"><a href="{url group_id=$group->id}">{$group->name}</a></li>
+        {/foreach}
+    </ul>
+    {* features_groups /*}
 		
 </div>
 <!-- Левое меню  (The End) -->
@@ -98,13 +123,33 @@ $(function() {
 	}
 	// Раскрасить строки сразу
 	colorize();
-	
+	 /* features_groups */
+    $("#action select[name=action]").change(function() {
+		if($(this).val() == 'move_to_group')
+			$("span#move_to_group").show();
+		else
+			$("span#move_to_group").hide();
+	});
+	$("#right_menu .droppable.features_group").droppable({
+		activeClass: "drop_active",
+		hoverClass: "drop_hover",
+		tolerance: "pointer",
+		drop: function(event, ui){
+			$(ui.helper).find('input[type="checkbox"][name*="check"]').attr('checked', true);
+			$(ui.draggable).closest("form").find('select[name="action"] option[value=move_to_group]').attr("selected", "selected");
+			$(ui.draggable).closest("form").find('select[name=target_group] option[value='+$(this).data('group_id')+']').attr("selected", "selected");
+			$(ui.draggable).closest("form").submit();
+			return false;
+		}
+	});
+    /* features_groups /*/
+
 	// Сортировка списка
 	$("#list").sortable({
 		items:             ".row",
 		tolerance:         "pointer",
 		handle:            ".move_zone",
-		axis: 'y',
+		//axis: 'y',
 		scrollSensitivity: 40,
 		opacity:           0.7, 
 		forcePlaceholderSize: true,

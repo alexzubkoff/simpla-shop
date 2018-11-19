@@ -4,6 +4,9 @@
 	{if in_array('categories', $manager->permissions)}<li><a href="index.php?module=CategoriesAdmin">Категории</a></li>{/if}
 	{if in_array('brands', $manager->permissions)}<li><a href="index.php?module=BrandsAdmin">Бренды</a></li>{/if}
 	<li class="active"><a href="index.php?module=FeaturesAdmin">Свойства</a></li>
+	 {* features_groups *}
+    <li><a href="index.php?module=FeaturesGroupsAdmin">Группы свойств</a></li>
+    {* features_groups /*}
 {/capture}
 
 {if $feature->id}
@@ -78,6 +81,16 @@ $(function() {
 			<h2>Настройки свойства</h2>
 			<ul>
 				<li><input type=checkbox name=in_filter id=in_filter {if $feature->in_filter}checked{/if} value="1"> <label for=in_filter>Использовать в фильтре</label></li>
+				{* features_groups *}
+                <li>
+                    <label>Группа свойства</label>
+                    <select name="group_id">
+                        {foreach $features_groups as $features_group}
+                            <option value="{$features_group->id}"{if $features_group->id == $feature->group_id} selected{/if}>{$features_group->name}</option>
+                        {/foreach}
+                    </select>
+                </li>
+                {* features_groups /*}
 			</ul>
 		</div>
 		<!-- Параметры страницы (The End)-->

@@ -48,6 +48,13 @@ class FeaturesAdmin extends Simpla
 					}
 			        break;
 			    }
+			     /* features_groups */
+                case 'move_to_group':{
+                    if($group_id = $this->request->post('target_group', 'integer'))
+                        $this->features->update_feature($ids, array('group_id'=>$group_id));
+					break;
+                }
+                /* features_groups /*/
 			}		
 	  	
 			// Сортировка
@@ -69,6 +76,14 @@ class FeaturesAdmin extends Simpla
 			$category = $this->categories->get_category($category_id);
 			$filter['category_id'] = $category->id;
 		}
+		 /* features_groups */
+        $group_id = $this->request->get('group_id', 'integer');
+        if($group_id && $features_group = $this->features->get_features_group($group_id)){
+            $filter['group_id'] = $features_group->id;
+            $this->design->assign('features_group', $features_group);
+        }
+        $this->design->assign('features_groups', $this->features->get_features_groups());
+        /* features_groups /*/
 		
 		$features = $this->features->get_features($filter);
 		

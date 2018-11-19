@@ -13,6 +13,9 @@ class FeatureAdmin extends Simpla
 			$feature->name = $this->request->post('name');
 			$feature->in_filter = intval($this->request->post('in_filter'));
 			$feature_categories = $this->request->post('feature_categories');
+			 /* features_groups */
+            $feature->group_id = $this->request->post('group_id', 'integer');
+            /* features_groups /*/
 
 			if(empty($feature->id))
 			{
@@ -44,6 +47,9 @@ class FeatureAdmin extends Simpla
 		$this->design->assign('categories', $categories);
 		$this->design->assign('feature', $feature);
 		$this->design->assign('feature_categories', $feature_categories);
+		/* features_groups */
+        $this->design->assign('features_groups', $this->features->get_features_groups());
+        /* features_groups /*/
 		return $this->body = $this->design->fetch('feature.tpl');
 	}
 }
