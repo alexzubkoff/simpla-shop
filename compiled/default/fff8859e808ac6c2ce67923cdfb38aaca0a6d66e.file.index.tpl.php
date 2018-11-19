@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.18, created on 2018-11-12 12:42:20
+<?php /* Smarty version Smarty-3.1.18, created on 2018-11-12 18:44:59
          compiled from "C:\OSPanel\domains\localhost\okay-cms\design\default\html\index.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:310405be94afc769169-93402813%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'fff8859e808ac6c2ce67923cdfb38aaca0a6d66e' => 
     array (
       0 => 'C:\\OSPanel\\domains\\localhost\\okay-cms\\design\\default\\html\\index.tpl',
-      1 => 1492708202,
+      1 => 1542037493,
       2 => 'file',
     ),
   ),
@@ -22,6 +22,8 @@ $_valid = $_smarty_tpl->decodeProperties(array (
       'compiled' => '',
     ),
   ),
+  'version' => 'Smarty-3.1.18',
+  'unifunc' => 'content_5be94afca896f8_35516726',
   'variables' => 
   array (
     'config' => 0,
@@ -50,8 +52,6 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'post' => 0,
   ),
   'has_nocache_code' => 0,
-  'version' => 'Smarty-3.1.18',
-  'unifunc' => 'content_5be94afca896f8_35516726',
 ),false); /*/%%SmartyHeaderCode%%*/?>
 <?php if ($_valid && !is_callable('content_5be94afca896f8_35516726')) {function content_5be94afca896f8_35516726($_smarty_tpl) {?><!DOCTYPE html>
 
@@ -85,6 +85,11 @@ $_valid = $_smarty_tpl->decodeProperties(array (
 	
 	
 	<script src="js/jquery/jquery.js"  type="text/javascript"></script>
+
+	<!--подкючаем fancybox-->
+	<link rel="stylesheet" type="text/css" media="all" href="js/fancybox/jquery.fancybox.css">
+	<script type="text/javascript" src="js/fancybox/jquery.fancybox.js"></script>
+	<script src="../../../js/auth.js" type="text/javascript"></script>
 	
 	
 	<?php if ($_SESSION['admin']=='admin') {?>
@@ -189,11 +194,22 @@ $_smarty_tpl->tpl_vars['p']->_loop = true;
 				</span>
 				<a id="logout" href="user/logout">выйти</a>
 			<?php } else { ?>
-				<a id="register" href="user/register">Регистрация</a>
-				<a id="login" href="user/login">Вход</a>
+				<a href="#auth" rel="nofollow" class="modalbox">Авторизация</a>
+				
 			<?php }?>
 		</div>
-		<!-- Вход пользователя (The End)-->
+
+		<div  class="popup-auth">
+			<!-- Login -->
+			<?php echo $_smarty_tpl->getSubTemplate ('auth_popup.tpl', $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, 0, null, array(), 0);?>
+
+			<!-- Register -->
+            <?php echo $_smarty_tpl->getSubTemplate ('register-popup.tpl', $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, 0, null, array(), 0);?>
+
+			<!-- Register -->
+            <?php echo $_smarty_tpl->getSubTemplate ('pass-remind.tpl', $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, 0, null, array(), 0);?>
+
+		</div>
 
 	</div>
 	</div>
@@ -391,7 +407,6 @@ $_smarty_tpl->tpl_vars['post']->_loop = true;
 	<div id="footer">
 		<a href="http://simplacms.ru">Скрипт интернет-магазина Simpla</a>
 	</div>
-	<!-- Футер (The End)--> 
-	
+	<!-- Футер (The End)-->
 </body>
 </html><?php }} ?>
