@@ -929,7 +929,7 @@ table.order_info td
 	border: 1px dotted #ff4545;
 }
 
-#auth,#register,#password_remind {
+#auth,#register,#password_remind,#user_message {
 	display:none;
 	background: #fafafa;
 	max-width: 490px;

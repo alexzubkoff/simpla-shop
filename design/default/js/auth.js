@@ -36,6 +36,7 @@ $(document).ready(function () {
                 }
 
                 if (response.action === 'password_remind') {
+                    $.fancybox.open('<div class="message"><h2>Hello!</h2><p>You are awesome!</p></div>');
                     alert('Ссылка для восстановления пароля была отправлена вам на почту');
                     setTimeout(function () {
                         window.location.href = response.url;

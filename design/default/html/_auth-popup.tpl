@@ -9,6 +9,7 @@
         <div class="form-row">
             <label class="form-label">Пароль</label>
             <input class="form-input" type="password" name="password" required="">
+            <p id="user-mes" class="alert alert-error hidden js-result"></p>
             <small class="long-link">
                 <a href="#password_remind" rel="nofollow" class="modalbox" class="js-tab-toggle"
                    data-target="password_remind">Забыли пароль?</a>
