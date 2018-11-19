@@ -43,8 +43,16 @@ class Features extends Simpla
 	function get_feature($id)
 	{
 		// Выбираем свойство
-		$query = $this->db->placehold("SELECT id, name, position, in_filter FROM __features WHERE id=? LIMIT 1", $id);
-		$this->db->query($query);
+// Выбираем свойство
+        /* chpu_filter */
+        /*$query = $this->db->placehold("SELECT id, name, position, in_filter FROM __features WHERE id=? LIMIT 1", $id);*/
+        if(is_int($id))
+            $where = $this->db->placehold('id = ?', $id);
+        else
+            $where = $this->db->placehold('url = ?', $id);
+        $query = $this->db->placehold("SELECT id, name, position, in_filter, url FROM __features WHERE $where LIMIT 1");
+        /* chpu_filter /*/
+        $this->db->query($query);
 		return $this->db->result();
 	}
 	
@@ -58,6 +66,21 @@ class Features extends Simpla
 	
 	public function add_feature($feature)
 	{
+	     /* chpu_filter */
+        $feature = (array)$feature;
+        if(empty($feature['url']))
+            $feature['url'] = $this->translit($feature['name']);
+        //не уверен в необходимости этого кода, т.к. при импорте свойство выбирается по названию и уже с выбранным свойством проводятся манипуляции спользуя его id
+        //и возможности дублировать свойства, как товары нет, но лишняя проверка - не лишняя
+        while($this->get_feature((string)$feature['url']))
+        {
+            if(preg_match('/(.+)([0-9]+)$/', $feature['url'], $parts))
+                $feature['url'] = $parts[1].''.($parts[2]+1);
+            else
+                $feature['url'] = $feature['url'].'2';
+        }
+        /* chpu_filter /*/
+
 		$query = $this->db->placehold("INSERT INTO __features SET ?%", $feature);
 		$this->db->query($query);
 		$id = $this->db->insert_id();
@@ -97,8 +120,14 @@ class Features extends Simpla
 	public function update_option($product_id, $feature_id, $value)
 	{	 
 		if($value != '')
-			$query = $this->db->placehold("REPLACE INTO __options SET value=?, product_id=?, feature_id=?", $value, intval($product_id), intval($feature_id));
-		else
+/* chpu_filter */
+            /*$query = $this->db->placehold("REPLACE INTO __options SET value=?, product_id=?, feature_id=?", $value, intval($product_id), intval($feature_id));*/
+            $query = $this->db->placehold(
+                "REPLACE INTO __options SET value=?, product_id=?, feature_id=?, translit=?",
+                $value, intval($product_id), intval($feature_id),
+                ($translit != '' ? $translit : $this->translit($value))
+            );
+            /* chpu_filter /*/		else
 			$query = $this->db->placehold("DELETE FROM __options WHERE feature_id=? AND product_id=?", intval($feature_id), intval($product_id));
 		return $this->db->query($query);
 	}
@@ -172,12 +201,18 @@ class Features extends Simpla
 		if(isset($filter['brand_id']))
 			$brand_id_filter = $this->db->placehold('AND po.product_id in(SELECT id FROM __products WHERE brand_id in(?@))', (array)$filter['brand_id']);
 
-		if(isset($filter['features']))
+		/* chpu_filter */
+        /*if(isset($filter['features']))
 			foreach($filter['features'] as $feature=>$value)
 			{
 				$features_filter .= $this->db->placehold('AND (po.feature_id=? OR po.product_id in (SELECT product_id FROM __options WHERE feature_id=? AND value=? )) ', $feature, $feature, $value);
-			}
-		
+			}*/
+        if(isset($filter['features']))
+            foreach($filter['features'] as $feature=>$value)
+            {
+                $features_filter .= $this->db->placehold('AND (po.feature_id=? OR po.product_id in (SELECT product_id FROM __options WHERE feature_id=? AND translit in(?@) )) ', $feature, $feature, $value);
+            }
+        /* chpu_filter /*/
 
 		$query = $this->db->placehold("SELECT po.product_id, po.feature_id, po.value, count(po.product_id) as count
 		    FROM __options po
@@ -194,11 +229,20 @@ class Features extends Simpla
 		$query = $this->db->placehold("SELECT f.id as feature_id, f.name, po.value, po.product_id FROM __options po LEFT JOIN __features f ON f.id=po.feature_id
 										WHERE po.product_id in(?@) ORDER BY f.position", (array)$product_id);
 $this->db->query($query);
-		$res = $this->db->results();
+		return $this->db->results();
+	}
+    /* chpu_filter */
+    public function translit($text){
+        $ru = explode('-', "А-а-Б-б-В-в-Ґ-ґ-Г-г-Д-д-Е-е-Ё-ё-Є-є-Ж-ж-З-з-И-и-І-і-Ї-ї-Й-й-К-к-Л-л-М-м-Н-н-О-о-П-п-Р-р-С-с-Т-т-У-у-Ф-ф-Х-х-Ц-ц-Ч-ч-Ш-ш-Щ-щ-Ъ-ъ-Ы-ы-Ь-ь-Э-э-Ю-ю-Я-я");
+        $en = explode('-', "A-a-B-b-V-v-G-g-G-g-D-d-E-e-E-e-E-e-ZH-zh-Z-z-I-i-I-i-I-i-J-j-K-k-L-l-M-m-N-n-O-o-P-p-R-r-S-s-T-t-U-u-F-f-H-h-TS-ts-CH-ch-SH-sh-SCH-sch---Y-y---E-e-YU-yu-YA-ya");
 
+        $res = str_replace($ru, $en, $text);
+        $res = preg_replace("/[\s-_]+/ui", '', $res);
+        $res = preg_replace('/[^\p{L}\p{Nd}\d-]/ui', '', $res);
+        $res = strtolower($res);
 		return $res;
 	}
-
+     /* chpu_filter /*/
     /* features_groups */
     public function get_grouped_products_options($product_id){
         $options = $groups = $res = array();

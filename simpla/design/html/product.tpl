@@ -177,17 +177,34 @@ $(function() {
 				{
 					feature = data[i];
 					
-					line = $("<li><label class=property></label><input class='simpla_inp' type='text'/></li>");
-					var new_line = line.clone(true);
-					new_line.find("label.property").text(feature.name);
-					new_line.find("input").attr('name', "options["+feature.id+"]").val(feature.value);
-					new_line.appendTo('ul.prop_ul').find("input")
-					.autocomplete({
-						serviceUrl:'ajax/options_autocomplete.php',
-						minChars:0,
-						params: {feature_id:feature.id},
-						noCache: false
-					});
+					/* chpu_filter */
+                    /*line = $("<li><label class=property></label><input class='simpla_inp' type='text'/></li>");
+                    var new_line = line.clone(true);
+                    new_line.find("label.property").text(feature.name);
+                    new_line.find("input").attr('name', "options["+feature.id+"]").val(feature.value);
+                    new_line.appendTo('ul.prop_ul').find("input")
+                    .autocomplete({
+                        serviceUrl:'ajax/options_autocomplete.php',
+                        minChars:0,
+                        params: {feature_id:feature.id},
+                        noCache: false
+                    });*/
+                    line = $("<li><label class=property></label><input class='simpla_inp option_value' type='text'/><input style='margin-left:170px;margin-top:2px;' readonly class='simpla_inp' type='text'/></li>");
+                    var new_line = line.clone(true);
+                    new_line.find("label.property").text(feature.name);
+                    new_line.find("input.option_value").attr('name', "options["+feature.id+"][value]").val(feature.value);
+                    new_line.find("input:not(.option_value)").attr('name', "options["+feature.id+"][translit]").val(feature.translit);
+                    new_line.appendTo('ul.prop_ul').find("input.option_value")
+                        .autocomplete({
+                            serviceUrl:'ajax/options_autocomplete.php',
+                            minChars:0,
+                            params: {feature_id:feature.id},
+                            noCache: false,
+                            onSelect:function(sugestion){
+                                $(this).trigger('change');
+                            }
+                        });
+                    /* chpu_filter /*/
 				}
 			}
 		});
@@ -200,13 +217,21 @@ $(function() {
 	});
 
 	// Автодополнение свойств
-	$('ul.prop_ul input[name*=options]').each(function(index) {
+	/* chpu_filter */
+	//$('ul.prop_ul input[name*=options]').each(function(index) {
+	$('ul.prop_ul input.option_value[name*=options]').each(function(index) {
+	/* chpu_filter /*/
 		feature_id = $(this).closest('li').attr('feature_id');
 		$(this).autocomplete({
 			serviceUrl:'ajax/options_autocomplete.php',
 			minChars:0,
 			params: {feature_id:feature_id},
 			noCache: false
+            /* chpu_filter */
+            ,onSelect:function(sugestion){
+                $(this).trigger('change');
+            }
+            /* chpu_filter /*/
 		});
 	}); 	
 	
@@ -463,7 +488,21 @@ function translit(str)
     } 
     return res;  
 }
-
+/* chpu_filter */
+function translit_option($elem)
+{
+    url = $elem.val();
+    url = url.replace(/[\s-_]+/gi, '');
+    url = translit(url);
+    url = url.replace(/[^0-9a-z_\-]+/gi, '').toLowerCase();
+    return url;
+}
+$(function(){
+    $('.option_value').live('keyup click change',function(){
+        $(this).next().val(translit_option($(this)));
+    })
+});
+/* chpu_filter /*/
 </script>
 
 <style>
@@ -648,7 +687,14 @@ overflow-y: auto;
 			<ul class="prop_ul">
 				{foreach $features as $feature}
 					{assign var=feature_id value=$feature->id}
-					<li feature_id={$feature_id}><label class=property>{$feature->name}</label><input class="simpla_inp" type="text" name=options[{$feature_id}] value="{$options.$feature_id->value|escape}" /></li>
+					<li feature_id={$feature_id}>
+						<label class=property>{$feature->name}</label>
+                        {* chpu_filter_extended *}
+                        {*<input class="simpla_inp" type="text" name=options[{$feature_id}] value="{$options.$feature_id->value|escape}" />*}
+						<input class="simpla_inp option_value" type="text" name=options[{$feature_id}][value] value="{$options.$feature_id->value|escape}" />
+						<input class="simpla_inp" style="margin-left:170px;margin-top:2px;" type="text" name=options[{$feature_id}][translit] readonly value="{$options.$feature_id->translit|escape}" />
+                        {* chpu_filter_extended /*}
+					</li>
 				{/foreach}
 			</ul>
 			<!-- Новые свойства -->

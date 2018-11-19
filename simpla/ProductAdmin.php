@@ -67,7 +67,11 @@ class ProductAdmin extends Simpla
 				{
 					$po[$f_id] = new stdClass;
 					$po[$f_id]->feature_id = $f_id;
-					$po[$f_id]->value = $val;
+                    /* chpu_filter */
+					//$po[$f_id]->value = $val;
+                    $po[$f_id]->value = $val['value'];
+                    $po[$f_id]->translit = $val['translit'];
+                    /* chpu_filter /*/
 				}
 				$options = $po;
 			}

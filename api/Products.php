@@ -103,10 +103,23 @@ class Products extends Simpla
 			}
 		}
 
-		if(!empty($filter['features']) && !empty($filter['features']))
+		/* chpu_filter */
+        /*if(!empty($filter['features']) && !empty($filter['features']))
 			foreach($filter['features'] as $feature=>$value)
-				$features_filter .= $this->db->placehold('AND p.id in (SELECT product_id FROM __options WHERE feature_id=? AND value=? ) ', $feature, $value);
-
+				$features_filter .= $this->db->placehold('AND p.id in (SELECT product_id FROM __options WHERE feature_id=? AND value=? ) ', $feature, $value);*/
+        if(!empty($filter['features']) && !empty($filter['features']))
+            foreach($filter['features'] as $feature=>$value)
+                $features_filter .= $this->db->placehold('AND p.id in (SELECT product_id FROM __options WHERE feature_id=? AND translit in(?@) ) ', $feature, (array)$value);
+        $price_filter = '';
+        $variant_join = '';
+        if(isset($filter['price'])){
+            if(!empty($filter['price']['min']))
+                $price_filter .= $this->db->placehold(' AND pv.price>= ? ', $this->db->escape(trim($filter['price']['min'])));
+            if(!empty($filter['price']['max']))
+                $price_filter .= $this->db->placehold(' AND pv.price<= ? ', $this->db->escape(trim($filter['price']['max'])));
+            $variant_join = 'LEFT JOIN __variants pv ON pv.product_id = p.id';
+        }
+        /* chpu_filter /*/
 		$query = "SELECT  
 					p.id,
 					p.url,
@@ -125,6 +138,9 @@ class Products extends Simpla
 					b.url as brand_url
 				FROM __products p		
 				$category_id_filter 
+				/* chpu_filter */
+                $variant_join
+                /* chpu_filter /*/
 				LEFT JOIN __brands b ON p.brand_id = b.id
 				WHERE 
 					1
@@ -136,6 +152,9 @@ class Products extends Simpla
 					$discounted_filter
 					$in_stock_filter
 					$visible_filter
+					/* chpu_filter */
+                    $price_filter
+                    /* chpu_filter /*/
 				$group_by
 				ORDER BY $order
 					$sql_limit";
@@ -198,13 +217,35 @@ class Products extends Simpla
 			$visible_filter = $this->db->placehold('AND p.visible=?', intval($filter['visible']));
 		
 		
-		if(!empty($filter['features']) && !empty($filter['features']))
+		/* chpu_filter */
+        /*if(!empty($filter['features']) && !empty($filter['features']))
 			foreach($filter['features'] as $feature=>$value)
-				$features_filter .= $this->db->placehold('AND p.id in (SELECT product_id FROM __options WHERE feature_id=? AND value=? ) ', $feature, $value);
-		
-		$query = "SELECT count(distinct p.id) as count
+				$features_filter .= $this->db->placehold('AND p.id in (SELECT product_id FROM __options WHERE feature_id=? AND value=? ) ', $feature, $value);*/
+        if(!empty($filter['features']) && !empty($filter['features']))
+            foreach($filter['features'] as $feature=>$value)
+                $features_filter .= $this->db->placehold('AND p.id in (SELECT product_id FROM __options WHERE feature_id=? AND translit in(?@) ) ', $feature, (array)$value);
+
+        $price_filter = '';
+        $variant_join = '';
+        $select = 'count(distinct p.id) as count';
+        if(isset($filter['get_price'])){
+            $variant_join = 'LEFT JOIN __variants pv ON pv.product_id = p.id';
+            $select = 'MIN(pv.price) as min, MAX(pv.price) as max';
+        }elseif(isset($filter['price'])){
+            if(!empty($filter['price']['min']))
+                $price_filter .= $this->db->placehold(' AND pv.price>= ? ', $this->db->escape(trim($filter['price']['min'])));
+            if(!empty($filter['price']['max']))
+                $price_filter .= $this->db->placehold(' AND pv.price<= ? ', $this->db->escape(trim($filter['price']['max'])));
+            $variant_join = 'LEFT JOIN __variants pv ON pv.product_id = p.id';
+        }
+        /* chpu_filter /*/
+
+		$query = "SELECT /* chpu_filter *//*count(distinct p.id) as count*/$select/* chpu_filter /*/
 				FROM __products AS p
 				$category_id_filter
+				/* chpu_filter */
+                $variant_join
+                /* chpu_filter /*/
 				WHERE 1
 					$brand_id_filter
 					$product_id_filter
@@ -213,10 +254,17 @@ class Products extends Simpla
 					$in_stock_filter
 					$discounted_filter
 					$visible_filter
-					$features_filter ";
+					$features_filter 
+					/* chpu_filter */
+                    $price_filter
+                    /* chpu_filter /*/";
 
-		$this->db->query($query);	
-		return $this->db->result('count');
+		$this->db->query($query);
+        /* chpu_filter_extended */
+        if(isset($filter['get_price']))
+            return $this->db->result();
+        else/* chpu_filter_extended /*/
+		    return $this->db->result('count');
 	}
 
 

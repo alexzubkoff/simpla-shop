@@ -25,6 +25,12 @@
 			$f->value = $options[$f->id]->value;
 		else
 			$f->value = '';
+        /* chpu_filter */
+        if(isset($options[$f->id]))
+            $f->translit = $options[$f->id]->translit;
+        else
+            $f->translit = '';
+        /* chpu_filter /*/
 	}
 
 	header("Content-type: application/json; charset=UTF-8");
