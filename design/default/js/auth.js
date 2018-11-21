@@ -10,7 +10,8 @@ $(document).ready(function () {
     $("#f_send").on("click", function () {
 
         // тут дальнейшие действия по обработке формы
-        // закрываем окно, как правило делать это нужно после обработки данных
+        // закрываем окно, делать это нужно после обработки данных
+
         $("#f_contact").fadeOut("fast", function () {
             $(this).before("<p><strong>Ваше сообщение отправлено!</strong></p>");
             setTimeout("$.fancybox.close()", 1000);
@@ -26,23 +27,13 @@ $(document).ready(function () {
             data: data,
             dataType: 'json',
             success: function (response) {
-                if (response.url) {
-                    window.location.href = response.url;
-                } else {
-                    $('#err-msg').text('Неверный логин или пароль').css({
-                        'color': '#de5959',
-                        'background-color': '#ffe9e9'
-                    });
-                }
-
-                if (response.action === 'password_remind') {
-                    $.fancybox.open('<div class="message"><h2>Hello!</h2><p>You are awesome!</p></div>');
-                    alert('Ссылка для восстановления пароля была отправлена вам на почту');
+                if ((response.action === 'login' || response.action === 'password_remind' || response.action === 'register') && response.errors === null) {
+                    $.fancybox.open(response.message);
                     setTimeout(function () {
                         window.location.href = response.url;
-                    }, 1000);
+                    }, 2000);
                 } else {
-                    $('#send-mail-message').text('Неверный адрес почты').css({
+                    $('#err-msg').text(response.errors).css({
                         'color': '#de5959',
                         'background-color': '#ffe9e9'
                     });
@@ -52,7 +43,6 @@ $(document).ready(function () {
                 console.log('something went wrong', status, err);
             }
         });
-
     });
 
 });

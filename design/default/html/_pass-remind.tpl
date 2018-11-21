@@ -11,9 +11,6 @@
             <div class="col-xs-6 col-xs-push-6 form-row text-right-xs">
                 <input type="submit" class="btn" value="Напомнить">
             </div>
-            <div class="col-xs-6 col-xs-pull-6 form-row text-left-xs hidden">
-                <span class="btn btn-light js-tab-toggle" data-target="login">Войти</span>
-            </div>
         </div>
         <div class="success success-remind-pass"><span></span></div>
     </form>

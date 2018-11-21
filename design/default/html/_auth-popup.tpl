@@ -25,12 +25,5 @@
             </div>
         </div>
         <div class="success"></div>
-        {if $error}
-            <div class="message_error">
-                {if $error == 'login_incorrect'}Неверный логин или пароль
-                {elseif $error == 'user_disabled'}Ваш аккаунт еще не активирован.
-                {else}{$error}{/if}
-            </div>
-        {/if}
     </form>
 </div>

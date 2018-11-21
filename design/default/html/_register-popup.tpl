@@ -1,6 +1,6 @@
 <div id="register" class="popup-tab hidden" data-tab="register">
     <p class="popup-title">Регистрация</p>
-    <form action="user/register" method="post" id="auth-register" class="js-auth-form2">
+    <form action="#" method="post" id="auth-register" class="js-auth-form">
         <input type="hidden" name="action" value="register">
         <div class="form-row">
             <label class="form-label">Имя</label>

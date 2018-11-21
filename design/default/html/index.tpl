@@ -147,8 +147,6 @@
             {include file='_register-popup.tpl'}
             <!-- Register -->
             {include file='_pass-remind.tpl'}
-            <!-- User message -->
-            {include file='_user-message.tpl'}
         </div>
 
     </div>
